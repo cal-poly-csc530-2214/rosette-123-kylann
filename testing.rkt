@@ -11,4 +11,7 @@
 (define p0 #f)
 (define p1 #t)
 
-(p0 -> p1)
+
+(define-symbolic p boolean?)
+(verify (solve (assert (or p (! p)))))
+
