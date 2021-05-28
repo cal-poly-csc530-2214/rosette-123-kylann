@@ -8,14 +8,17 @@
 ; * 'TAUTOLOGY if every interpretation I satisfies F;
 ; * 'CONTRADICTION if no interpretation I satisfies F;
 ; * 'CONTINGENCY if there are two interpretations I and I′ such that I satisfies F and I' does not.
+
 (define (classify F)
-  (error 'classify "not implemented yet!"))
+  (cond
+    [(unsat? (verify (assert F))) 'TAUTOLOGY] ; unsat: tautology
+    [(model (verify (assert F))) 'CONTRADICTION] ; empty model: contradiction
+    [else 'CONTINGENCY])) ; else contingency
 
 (define-symbolic* p q r boolean?)
 
 ; (p → (q → r)) → (¬r → (¬q → ¬p))
 (define f0 (=> (=> p (=> q r)) (=> (! r) (=> (! q) (! p)))))
-(print (solve f0))
 
 ; (p ∧ q) → (p → q)
 (define f1 (=> (&& p q) (=> p q)))
@@ -25,14 +28,7 @@
 
 (define f3 (or p (! p)))
 
-(define (tautology F) (verify (assert (or F (! F)))))
-(print (tautology f0)) ; F
-(print (tautology f1)) ; T
-(print (tautology f2)) ; F
-(print (tautology f3)) ; T
-
-(define (contradiction F) (solve (assert (and F (! F)))))
-(print (contradiction f0)) ; F
-(print (contradiction f1)) ; F
-(print (contradiction f2)) ; T
-(print (contradiction f3)) ; F
+(print (classify f0)) ; 'CONTINGENCY
+(print (classify f1)) ; 'TAUTOLOGY
+(print (classify f2)) ; 'CONTRADICTION
+(print (classify f3)) ; 'TAUTOLOGY
